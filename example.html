@@ -1,0 +1,52 @@
+<html>
+  <head>
+    <style>
+      body {
+        background-color: gray;
+        font-family: Helvetica, sans-serif;
+      }
+    </style>
+    <script type="text/javascript" src="fn.js"></script>
+    <script type="text/javascript">
+      function eltByName(s) {
+          return document.getElementById(s);
+      }
+      function addClass(target, cls) {
+          target.className += (" " + cls);
+      }
+      function popAlert(event) {
+          alert("You clicked on " + event.target.id);
+      }
+
+      function doLoad() {
+          h1 = eltByName("header1");
+          h2 = eltByName("header2");
+          h3 = eltByName("header3");
+
+          eventH(h1, 'click').next(popAlert.cps()).run();
+          eventH(h2, 'click').next(popAlert.cps()).next(eventH(h2, 'click')).next(popAlert.cps()).run()
+          eventH(h3, 'click').next(popAlert.cps()).next(repeat).loop().run();
+      }
+      window.addEventListener('load', doLoad, false);
+    </script>
+  </head>
+  <body>
+    <h1 id="header1">Click On Me Once!</h1>
+    <div>
+      Clicking on the above should only work once.  The eventH function registers its continuation, and
+      when invoked, unregisters itself.
+    </div>
+    <h1 id="header2">Click On Me Twice!</h1>
+    <div>
+      Clicking on the above should only work twice.  Due to the composable nature of continuation passing
+      functions, you do not have to nest your continuations if you don't want to.  They will work either way.
+    </div>
+    <h1 id="header3">Click On Me A Bunch!</h1>
+    <div>
+      The above header has a looped event handler registered on it.  Any function that passes its continuation
+      a repeat object can be looped and stopped whenever it so decides.  The repeat/done functions will do this
+      for you as continuation passing functions so you can write them directly in your function chains if you don't
+      want that logic cluttering up your action code.
+    </div>
+  </body>
+</html>
