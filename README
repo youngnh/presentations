@@ -1,5 +1,3 @@
-St. Louis Lambda Lounge Presentation - Feb 5, 2009
+slides, code and notes from talks I've given
 
-This is the source code from my presentation.  Its been cleaned a good deal, put into a single file, and there's an included demo page to play around with it.
-
-I didn't cover continuation passing functions in very much detail in my presentation, but they are very cool and everything my in my code that deals with them was inspired by the work these guys: http://www.cs.umd.edu/projects/PL/arrowlets/ did.  They, in turn, were heavily influenced by the Arrow libraries in Haskell.
+* St. Louis Lambda Lounge - Feb 5, 2009
