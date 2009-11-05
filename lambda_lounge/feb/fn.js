@@ -7,6 +7,8 @@
 // currying, tail recursion, method chaining and monads
 // easier and more efficient to use.
 
+var _ = {};
+
 function curry(f) {
     return function() {
         var args = Array.prototype.slice.call(arguments);
@@ -19,6 +21,17 @@ function curry(f) {
                 return f.apply(null, allargs);
             };
         }
+	var placeholder;
+	for(var i = 0; i < args.length; i++) {
+	    if(args[i] == _) {
+		placeholder = i;
+		return function(replaceWith) {
+		    var allargs = args.slice();
+		    allargs[placeholder] = replaceWith;
+		    return f.apply(null, allargs);
+		};
+	    }
+	}
         return f.apply(null, args);
     };
 }
