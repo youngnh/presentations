@@ -461,7 +461,7 @@ Nate Young
 </ul>
 <pre><code>(defun whatsit (bacon eggs)
   (let ((x (some-calculation)))
-    (do-a-thing (cook bacon eggs) '(1 2 3))))
+    (do-a-thing (cook bacon eggs) x '(1 2 3))))
 </code></pre>
 </div>
 <div class="slide">
@@ -487,7 +487,7 @@ Nate Young
 </ul>
 <pre class="clojure"><code>(def x {&quot;dog&quot; &quot;cat&quot;
         &quot;hawk&quot; &quot;squirrel&quot;
-        &quot;emacs&quot; &quot;vim&quot;}
+        &quot;emacs&quot; &quot;vim&quot;})
 
 (assoc x &quot;death star&quot; &quot;alderaan&quot;)
 </code></pre>
@@ -521,12 +521,12 @@ Nate Young
 <ul>
 <li>promises, futures</li>
 </ul>
-<pre class="clojure"><code>(future (launch-the-missles))
+<pre class="clojure"><code>(future (launch-the-missiles))
 
-(let [launch-the-missles (promise)]
+(let [launch-the-missiles (promise)]
   (when (le-tired?)
-    (future (take-a-nap) (deliver launch-the-missles :ok)))
-  @launch-the-missles)
+    (future (take-a-nap) (deliver launch-the-missiles :ok)))
+  @launch-the-missiles)
 </code></pre>
 </div>
 <div class="slide">
@@ -732,7 +732,9 @@ return cljs.core.str.call(null,&quot;Hello &quot;,s,&quot;!&quot;);
 </div>
 <div class="slide">
 <h1 id="clojure-on-the-server-clojurescript-in-the-browser">Clojure on the Server, ClojureScript in the Browser</h1>
-<p>-parens everywhere</p>
+<ul>
+<li>parens everywhere</li>
+</ul>
 </div>
 <div class="slide">
 <h1 id="lessons-learned-pitfalls">Lessons learned, pitfalls</h1>

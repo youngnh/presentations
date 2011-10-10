@@ -32,7 +32,7 @@
 ~~~~
 (defun whatsit (bacon eggs)
   (let ((x (some-calculation)))
-    (do-a-thing (cook bacon eggs) '(1 2 3))))
+    (do-a-thing (cook bacon eggs) x '(1 2 3))))
 ~~~~
 
 # Clojure Refresher
@@ -62,7 +62,7 @@
 ~~~~{.clojure}
 (def x {"dog" "cat"
         "hawk" "squirrel"
-        "emacs" "vim"}
+        "emacs" "vim"})
 
 (assoc x "death star" "alderaan")
 ~~~~
@@ -97,12 +97,12 @@
 - promises, futures
 
 ~~~~{.clojure}
-(future (launch-the-missles))
+(future (launch-the-missiles))
 
-(let [launch-the-missles (promise)]
+(let [launch-the-missiles (promise)]
   (when (le-tired?)
-    (future (take-a-nap) (deliver launch-the-missles :ok)))
-  @launch-the-missles)
+    (future (take-a-nap) (deliver launch-the-missiles :ok)))
+  @launch-the-missiles)
 ~~~~
 
 # Clojure Refresher
@@ -288,7 +288,7 @@ return cljs.core.str.call(null,"Hello ",s,"!");
 
 # Clojure on the Server, ClojureScript in the Browser
 
--parens everywhere
+- parens everywhere
 
 # Lessons learned, pitfalls
 
