@@ -1,6 +1,7 @@
-_slides, code and notes from talks I've given_
+_Slides, code and notes from talks I've given_
 
 ## Presentations ##
-* **Functional Javascript** - _Feb 5, 2009_ - St. Louis Lambda Lounge
-* **Parser Combinators** - _Sep 19, 2011_ - Strange Loop
-* **ClojureScript** - _Oct 6, 2011_ - St. Louis Lambda Lounge
+* **Clojure at Revelytix** - _Sep 5, 2012_ - [Clojure.mn](http://clojure.mn/)
+* **ClojureScript** - _Oct 6, 2011_ - [Lambda Lounge](http://lambdalounge.org/)
+* **Parser Combinators** - _Sep 19, 2011_ - [Strange Loop](https://thestrangeloop.com/)
+* **Functional Javascript** - _Feb 5, 2009_ - [Lambda Lounge](http://lambdalounge.org/)
