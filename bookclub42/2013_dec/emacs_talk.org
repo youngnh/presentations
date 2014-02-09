@@ -1,0 +1,51 @@
+#+STARTUP: showall
+
+#+TITLE: Proper Care & Feeding of your Emacs Editor
+#+AUTHOR: Nate Young
+#+DATE: 2013-12-03
+
+* Obtaining Your Very Own Emacs
+** version 24.3
+package.el is available for version 23, elpa is a must
+** Caps Lock / Control
+** Starter Kit
+
+
+* Get To Know Your Emacs
+** Just start typing (no modes!)
+** C-f, C-b, C-n, C-p
+** (arrow keys)
+** Use the tutorial: C-h t
+
+
+* Assert Your Authority
+** Key Chords: incantations of power
+** M-x: overly wordy incantations of equal or greater power
+** C-h f
+
+
+* Lisp
+** Common Lisp
+*** Slime
+** Clojure
+*** Cider
+https://github.com/clojure-emacs/cider
+** Create a project
+** Load your code
+** REPL
+** Eval in-line: C-x C-e
+** Expand macros:
+** Jump to a definition:
+** Breakpoint / Debugging
+
+
+* Growing Old Together
+** rgrep, find-name-dired
+** ido-completion
+** load lisp
+** magit
+** occur
+** scratch buffers
+** everything is a buffer
+** paredit
+
