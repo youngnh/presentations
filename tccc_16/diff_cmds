@@ -1,0 +1,5 @@
+# Use these commands to review the changes necessary for increasing optimization levels
+
+diff -Naur -x fourblock-compiled.js fourblock-orig/ fourblock-ws/
+diff -Naur -x fourblock-compiled.js fourblock-ws/ fourblock-simple/
+diff -Naur -x fourblock-compiled.js fourblock-simple/ fourblock-advanced/
