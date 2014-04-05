@@ -1,0 +1,10 @@
+#!/bin/bash
+
+python ../closure-library/closure/bin/calcdeps.py \
+  --path ../closure-library \
+  --input hello.js \
+  --compiler_jar ../closure-compiler/build/compiler.jar \
+  --output_mode compiled \
+  --compiler_flags="--compilation_level=ADVANCED_OPTIMIZATIONS" \
+  --compiler_flags="--define=goog.userAgent.ASSUME_WEBKIT=true" \
+  > hello-compiled.js

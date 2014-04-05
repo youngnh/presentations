@@ -22,6 +22,7 @@ example.sayHello = function(message) {
 <html>
   <head>
     <title>Example: Hello World</title>
+    <style>#hello { font-size: 500% }</style>
   </head>
   <body>
     <div id="hello"></div>
@@ -72,9 +73,7 @@ $ ./compile
 <html>
   <head>
     <title>Example: Hello World</title>
-    <style>
-      #hello { font-size: 500% }
-    </style>
+    <style>#hello { font-size: 500% }</style>
   </head>
   <body>
     <div id="hello"></div>
@@ -101,7 +100,6 @@ python ../closure-library/closure/bin/calcdeps.py \
   --compiler_jar ../closure-compiler/build/compiler.jar \
   --output_mode compiled \
   --compiler_flags="--compilation_level=ADVANCED_OPTIMIZATIONS" \
-  --compiler_flags="--define=goog.userAgent.ASSUME_WEBKIT=true" \
   > hello-compiled.js
 ~~~~~~~~~~
 
