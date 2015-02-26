@@ -1,0 +1,279 @@
+#+STARTUP: showall
+#+DATE: 26 Feb 2015
+
+I have no idea what I'm doing, but I like to read and this presentation
+repackages a lot of things that I learned reading these two sources:
+http://docs.racket-lang.org/more/
+http://tmp.barzilay.org/cont.txt
+
+
+* A. Continuations
+
+(display (+ <yell it out>
+            (* 2 <shout it out>)))
+
+(display (+ _
+            (* 2 _)))
+
+
+(display (+ (read)
+            (* 2 (read))))
+
+* A.1 Evaluation
+
+<yell it out> ; i.e. (read)
+<shout it out> ; i.e. (read)
+(* 2 <shouted>)
+(+ <yelled> [last thing])
+(display [last thing])
+
+* A.2 Purity
+
+(define (read/k k)
+  (k (read)))
+
+(define (display/k item k)
+  (display item)
+  (k))
+
+(read/k
+  (lambda (a)
+    (read/k (lambda (b)
+      (display/k (+ b (* 2 a))
+        (lambda () (void)))))))
+
+(read/k
+  (lambda (b)
+    (read/k (lambda (a)
+      (display/k (+ b (* 2 a))
+        (lambda () (void)))))))
+
+
+** What is the outermost continuation?
+
+* A.3 Continue with Continuations
+** largely appropriated from http://tmp.barzilay.org/cont.txt
+
+(define (sum-n n)
+  (if (zero? n)
+    0
+    (+ (read)
+       (sum-n (sub1 n)))))
+
+** Work out the evaluation
+
+(sum-n 3)
+
+(+ (read)
+   (sum-n (sub1 3)))
+
+(read)
+(sum-n 2)
+(+ [first thing] [second thing])
+
+** Work out CPS transform
+
+(define (sum-n/k n k)
+  (if (zero? n)
+    (k 0)
+    (read/k
+      (lambda (a)
+        (sum-n/k (sub1 n)
+          (lambda (total)
+            (k (+ a total))))))))
+
+* A.4 Type Signatures!
+
+type answer
+read/k : (string -> answer) -> answer
+display/k : string -> (unit -> answer) -> answer
+
+* A.5 In case you're tempted to write a Haskell in a Lisp
+
+type IO a = (a -> answer) -> answer
+read/k : IO string
+display/k : string -> IO ()
+
+* B. Servlets
+
+* B.0 Obligatory
+
+(require web-server/servlet
+         web-server/servlet-env)
+
+(define (string-param req id)
+  (match (bindings-assq id (request-bindings/raw req))
+    [(? binding:form? b)
+     (bytes->string/utf-8 (binding:form-value b))]))
+
+(define (hello req)
+  (response/xexpr
+    `(html (body "Hello, " ,(string-param req #"name")))))
+
+(serve/dispatch
+  (dispatch-case
+    [("hello") hello]))
+
+* B.1 Gather Input from the World Wide Web
+
+(web-display (+ (web-read)
+                (* 2 (web-read))))
+
+* B.2 Generate Response, Read Request
+
+(define (web-read/k k)
+  (response/xexpr
+    `(html (body
+             (form ([method "POST"] [action ,url])
+               (input ([type "text"] [name "input"]))
+               (input ([type "submit"] [value "Submit"])))))))
+
+(define (add2 req)
+  (web-read/k
+    (lambda (a)
+      (web-read/k (lambda (b)
+        (web-display/k (+ b (* 2 a))
+          (response/xexpr
+            `(html (body "Sum is " ,(number->string (+ a (* 2 b))))))))))
+
+(serve/dispatch
+  (dispatch-case
+    [("add2") add2]))
+
+** No, but seriously
+
+(require web-server/servlet
+         web-server/servlet-env)
+
+(define (number-param req id)
+  (match (bindings-assq id (request-bindings/raw req))
+    [(? binding:form? b)
+     (string->number (bytes->string/utf-8 (binding:form-value b)))]))
+
+(define k-table (make-hash))
+
+(define (k-dispatch req k-id)
+  (define k (hash-ref k-table k-id))
+  (k (number-param req #"input")))
+
+(define (web-read/k k)
+  (define k-id (number->string (random 100000000)))
+  (hash-set! k-table k-id k)
+  (response/xexpr
+    `(html (body
+             (form ([method "POST"] [action ,k-id])
+               (input ([type "text"] [name "input"]))
+               (input ([type "submit"] [value "Submit"])))))))
+
+(define (add2 req)
+  (web-read/k (lambda (a)
+    (web-read/k (lambda (b)
+      (response/xexpr
+        `(html (body "Sum is " ,(number->string (+ a (* 2 b)))))))))))
+
+(serve/dispatch
+  (dispatch-case
+    [("add2") add2]
+    [((string-arg)) #:method (or "get" "post") k-dispatch]))
+
+* B.3 Let Racket Figure Out the Continuation
+
+** a little obsessed with functions, huh?
+
+(+ (read) (call/cc (lambda (k)
+            (k (* 2 (read))))))
+
+** why would you do this?
+
+(+ (read) (call/cc (lambda (k)
+            (* 2 (read)))))
+
+** step (back) into my office
+
+(define time-machine #f)
+
+(+ (read) (call/cc (lambda (k)
+            (set! time-machine k)
+            (* 2 (read)))))
+
+** abort, abort
+
+(require racket/control)
+(+ (read) (abort 42))
+
+* B.3 How to change your mind & store the old brain for later
+
+(define (web-read/cc)
+  (call/cc
+    (lambda (k)
+      (define k-id (number->string (random 100000000)))
+      (hash-set! k-table k-id k)
+      (abort/cc servlet-prompt
+        (response/xexpr
+          `(html ...
+
+(define (add2 req)
+  (response/xexpr
+    `(html (body "Sum is " ,(number->string (+ (web-read/cc) (* 2 (web-read/cc))))))))
+
+** No, but seriously
+
+(require racket/control
+         web-server/servlet
+         web-server/servlet-env)
+
+(define (number-param req id)
+  (match (bindings-assq id (request-bindings/raw req))
+    [(? binding:form? b)
+     (string->number (bytes->string/utf-8 (binding:form-value b)))]))
+
+(define k-table (make-hash))
+
+(define (k-dispatch req k-id)
+  (define k (hash-ref k-table k-id))
+  (k (number-param req #"input")))
+
+(define (web-read/cc)
+  (call/cc
+    (lambda (k)
+      (define k-id (number->string (random 100000000)))
+      (hash-set! k-table k-id k)
+      (abort/cc servlet-prompt
+        (lambda ()
+          (response/xexpr
+            `(html (body
+                     (form ([method "POST"] [action ,k-id])
+                       (input ([type "text"] [name "input"]))
+                       (input ([type "submit"] [value "Submit"])))))))))
+    servlet-prompt))
+
+(define (add2 req)
+  (response/xexpr
+    `(html (body "Sum is " ,(number->string (+ (web-read/cc) (* 2 (web-read/cc))))))))
+
+(serve/dispatch
+  (dispatch-case
+    [("add2") add2]
+    [((string-arg)) #:method (or "get" "post") k-dispatch]))
+
+* B.4 send/suspend & friends
+
+** send/back
+** send/suspend
+** send/suspend/dispatch
+** send/finish
+
+** The default urls are UGLY
+** http://localhost:8000/sum;((%22k%22%20.%20%22(1%201%2093459721)%22))
+*** which is url-encoded http://localhost:8000/sum;(("k" . "(1 1 93459721)"))
+*** which is still pretty bad
+
+* C.1 OAuth
+
+* D.1 Further Tricks
+
+** suspend by other means
+*** websockets, message broker, ...
+** event-driven applications
+*** Java NIO event-loops
+*** Client-side JavaScript applications
