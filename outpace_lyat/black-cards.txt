@@ -1,0 +1,24 @@
+Its been 2 days since the invention of the latest JavaScript framework: _____
+Internet Explorer is the new _____
+_____ broke the web
+_____ is a one-liner in lisp
+Even veteran programmers sometimes get bitten by _____
+This paper serves as a brief introduction to the calculus of _____
+Technically, _____ is turing complete
+_____ makes debugging more of a formality
+The Sapir-Whorf Hypothesis, but applied to _____
+_____, now for Big Data
+_____ has a lot in common with Scheme
+Sure, there's a Buildpack for _____ on Heroku
+_____ are one honking great idea -- let's do more of those!
+_____ considered harmful
+Computer science is no more about _____ than astronomy is about telescopes
+The language that makes _____ easy for young programmers to start programming with
+Linus Torvalds wrote Linux entirely in _____, so it must be good
+Premature _____ is the root of all evil
+Beware of bugs in _____, I have only proved it correct, not tried it
+Become a better programmer, learn _____ in just 10 days!
+Stop everything! We're rewriting our product using _____
+_____. This is, in fact, not the case
+_____ will remove boilerplate from your _____
+_____ as a service

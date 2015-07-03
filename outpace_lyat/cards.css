@@ -1,0 +1,45 @@
+.card {
+    float: left;
+    border-width: 1px;
+    border-style: solid;
+    width: 2in;
+    height: 2.5in;
+    margin-right: 20px;
+    margin-bottom: 20px;
+    padding: 1%;
+    background-size: 20px 20px;
+    background-repeat: no-repeat;
+    background-position: 5% 95%;
+    cursor: pointer;
+}
+
+.card span {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-weight: bold;
+    font-size: 22px;
+}
+
+.card span:after {
+    content: ".";
+}
+
+.white {
+    background-image: url("ll.png");
+    border-color: black;
+}
+
+.black {
+    color: white;
+    background-image: url("ll_inv.png");
+    background-color: black;
+    border-color: white;
+}
+
+.back {
+    background-position: center;
+    background-size: 50%;
+}
+
+.back span {
+    visibility: hidden;
+}

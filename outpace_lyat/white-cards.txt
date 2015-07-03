@@ -1,0 +1,68 @@
+Monads
+Monoids
+Endofunctors, home of the little furry wookie functors
+Fat arrows
+Continuations
+Promises
+C++ templates
+Static program analysis
+Second-order logic
+The untyped lambda calculus
+The Go programming language
+S-expressions
+Prefix notation
+A sufficiently smart compiler
+Unmanaged pointers
+Operational semantics
+Callback Hell
+Literate programming
+Rich Hickey's hair
+Provably correct programs
+Code-generation annotations
+4th-generation languages
+Logic programming
+Prolog
+Whitespace
+Category Theory
+Lazy-evaluation
+JavaScript's object model
+Lexical scope
+Pattern matching
+Dynamic typing
+The myth of the 10x programmer
+Smug lisp weeney
+The node.js guy
+async/await
+Hygienic macros
+A cucumber-like DSL
+Eval
+Global mutable state
+Reactive streams
+Docker containers
+A tracing JIT
+Tying the knot
+Recursive abstract data type
+Anonymous functions
+The Y-combinator
+Writing your own datalog
+The relational algebra
+Time-zones
+Higher-kinded types
+COBOL
+Shuffling your academic rival's punch-cards
+Space vs time tradeoff
+The blub paradox
+Functional composition
+Type-safety
+Subtype-polymorphism
+Covariant contraband
+Condescending compiler error messages
+Year-long scala build times
+Monkeypatching
+The Hundred-Year language
+Stringly-typed
+Type smuggling
+Significant whitespace
+Compiles-to-JS languages
+Multi-pass compilers
+Single-pass compilers
