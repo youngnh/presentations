@@ -24,13 +24,13 @@
 }
 
 .white {
-    background-image: url("ll.png");
+    background-image: url("/images/ll.png");
     border-color: black;
 }
 
 .black {
     color: white;
-    background-image: url("ll_inv.png");
+    background-image: url("/images/ll_inv.png");
     background-color: black;
     border-color: white;
 }

@@ -124,17 +124,19 @@
 
 (define-values (dispatcher to-url)
   (dispatch-rules
-   [("debug") (client-page "Debug" "js/debug_client.js")]))
+   [("czar") (client-page "czar" "js/czar_client.js")]
+   [("debug") (client-page "debug" "js/debug_client.js")]))
 
-(define ((client-page header script) req)
+(define ((client-page module script) req)
   (response/xexpr
    `(html
      (head (title "Continuations Against Humanity")
-           (link ([href "css/cards.css"] [ref "stylesheet"])))
+           (link ([href "css/cards.css"] [rel "stylesheet"])))
      (body
-      (h1 ,header)
+      (h1 ,module)
       (div ([id "container"]))
-      (script ([src ,script]))))))
+      (script ([src ,script]))
+      (script ,(format "cah.main.~a()" module))))))
 
 (define (message-loop g c)
   (let ([msg (ws-recv c)])

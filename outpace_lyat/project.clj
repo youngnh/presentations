@@ -12,4 +12,9 @@
                        {:source-paths ["cljs"]
                         :compiler {:output-dir "compiled/cljsbuild/debug/"
                                    :output-to "js/debug_client.js"
+                                   :optimizations :simple}}
+                       :czar
+                       {:source-paths ["cljs"]
+                        :compiler {:output-dir "compiled/cljsbuild/czar"
+                                   :output-to "js/czar_client.js"
                                    :optimizations :simple}}}})
