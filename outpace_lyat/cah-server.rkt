@@ -125,6 +125,7 @@
 (define-values (dispatcher to-url)
   (dispatch-rules
    [("czar") (client-page "czar" "js/czar_client.js")]
+   [("player") (client-page "player" "js/player_client.js")]
    [("debug") (client-page "debug" "js/debug_client.js")]))
 
 (define ((client-page module script) req)

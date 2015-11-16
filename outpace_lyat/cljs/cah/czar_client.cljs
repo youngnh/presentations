@@ -35,7 +35,7 @@
                     (cons @black-card @white-cards)
                     (cons @black-card (repeat @submitted ["white card back"]))))]
       [:div
-       (for [[class text on-click] cards]
+       (for [[class text] cards]
          (if text
            [:div {:class class :on-click #(async/put! choice-ch text)}
             [:span text]]

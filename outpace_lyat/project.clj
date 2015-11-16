@@ -17,4 +17,10 @@
                        {:source-paths ["cljs"]
                         :compiler {:output-dir "compiled/cljsbuild/czar"
                                    :output-to "js/czar_client.js"
+                                   :optimizations :simple}}
+
+                       :player
+                       {:source-paths ["cljs"]
+                        :compiler {:output-dir "compiled/cljsbuild/player"
+                                   :output-to "js/player_client.js"
                                    :optimizations :simple}}}})
