@@ -17,7 +17,9 @@
                        (async/put! result-ch [send-ch recv-ch])
                        (async/close! result-ch)))
       (aset "onmessage" (fn [event]
-                          (async/put! recv-ch (.-data event))))
+                          (let [msg (.-data event)]
+                            (.log js/console "Received" msg)
+                            (async/put! recv-ch msg))))
       (aset "onerror" (fn [event]
                         (.error js/console event)))
       (aset "onclose" (fn []

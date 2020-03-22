@@ -4,123 +4,107 @@
          web-server/servlet
          web-server/servlet-env)
 
-(struct game (czar-join player-join player-submit) #:mutable)
+(define current-continuation #f)
 
-(define (make-game)
-  (game
-   (lambda (c) (ws-send! c "game not started yet"))
-   (lambda (c) (ws-send! c "czar not yet joined"))
-   (lambda (c msg) (ws-send! c "cannot submit yet"))))
+(define (set!/cc)
+  (shift k (set! current-continuation k)))
 
-(define SERVER-PATHS (list "/Users/n/src/presentations/outpace_lyat"))
-(define WHITE-CARDS (file->lines "white-cards.txt"))
+(define (czar-join)
+  (let-values ([(c msg) (set!/cc)])
+    (if (equal? msg "join as czar")
+      c
+      (czar-join))))
+
+(define (player-join)
+  (let-values ([(c msg) (set!/cc)])
+    (if (equal? msg "join as player")
+      c
+      (player-join))))
+
+(struct submission (card player))
+
+(define (player-submit)
+  (let-values ([(c msg) (set!/cc)])
+    (submission msg c)))
+
+(define N-PLAYERS 3)
 (define BLACK-CARDS (file->lines "black-cards.txt"))
+(define WHITE-CARDS (file->lines "white-cards.txt"))
 
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define (play-game g)
+(define (play-game)
   (define black-deck (shuffle BLACK-CARDS))
   (define white-deck (shuffle WHITE-CARDS))
-  
+
   (define (draw-black-card)
     (begin0
       (first black-deck)
       (set! black-deck (rest black-deck))))
-  
+
   (define (draw-white-cards)
     (let-values ([(drawn deck-left) (split-at white-deck 10)])
       (set! white-deck deck-left)
       drawn))
-  
-  (let* ([czar (czar-join g)]
-         [black-card (draw-black-card)]
-         [_ (ws-send! czar black-card)]
-         [players (n-players-join g 3
-                    (lambda (p)
-                      (ws-send! p black-card)
-                      (map (lambda (card) (ws-send! p card)) (draw-white-cards))))]
-         [_ (map (lambda (p) (ws-send! p "submit a white card")) players)]
-         [submissions (all-players-submit g players
-                        (lambda _
-                          (ws-send! czar "card submitted")))]
-         [_ (map (lambda (submission) (ws-send! czar (cdr submission))) submissions)]
-         [winner (czar-pick g czar)])
-    (displayln (string-append "Czar chose: " winner))
-    (map (lambda (submission)
-           (if (equal? (cdr submission) winner)
-               (ws-send! (car submission) "You've won!")
-               (ws-send! (car submission) "You lost :/")))
-         submissions)
-    (displayln "Game Over!")))
 
-(define (czar-join g)
-  (shift k
-    (set-game-czar-join! g
-      (lambda (c)
-        (thread (lambda () (k c)))
-        (set-game-czar-join! g
-          (lambda (c)
-            (ws-send! c "czar already joined")))))
-    (void)))
+  (define czar (czar-join))
+  (define black-card (draw-black-card))
+  (ws-send! czar black-card)
 
-(define (player-join g)
-  (shift k
-    (set-game-player-join! g
-      (lambda (c)
-        (thread (lambda () (k c)))))
-    (void)))
+  (define (all-players-join)
+    (define (go n players)
+      (if (= n 0)
+          players
+          (let ([player (player-join)])
+            (ws-send! player black-card)
+            (map (lambda (card) (ws-send! player card)) (draw-white-cards))
+            (go (- n 1) (cons player players)))))
+      (go N-PLAYERS null))
 
-(define (player-submit g)
-  (shift k
-    (set-game-player-submit! g
-      (lambda (c msg)
-        (thread (lambda () (k (cons c msg))))))
-    (void)))
+  (define players (all-players-join))
 
-(define (czar-pick g czar)
-  (let* ([submission (player-submit g)]
-         [p (car submission)])
-    (if (equal? p czar)
-        (begin
-         (set-game-player-submit! g
-           (lambda (c msg)
-             (ws-send! c "czar pick already submitted")))
-         (cdr submission))
-        (begin
-          (ws-send! p "not the czar")
-          (czar-pick g czar)))))
+  (map (lambda (p) (ws-send! p "submit a white card")) players)
 
-(define (n-players-join g n callback)
-  (if (= n 0)
-      (begin
-        (set-game-player-join! g
-          (lambda (c)
-            (ws-send! c "game is full")))
-        '())
-      (let ([player (player-join g)])
-        (callback player)
-        (cons player (n-players-join g (- n 1) callback)))))
+  (define (all-players-submit)
+    (define (go ps submissions)
+      (if (set-empty? ps)
+          submissions
+          (let* ([s (player-submit)]
+                 [player (submission-player s)])
+            (if (set-member? ps player)
+                (begin
+                  (ws-send! czar "card submitted")
+                  (go (set-remove ps player) (cons s submissions)))
+                (begin
+                 (ws-send! player "already submitted")
+                 (go ps submissions))))))
+    (go players null))
 
-(define (all-players-submit g players callback)
-  (if (empty? players)
-      (begin
-        (set-game-player-submit! g
-          (lambda (c msg)
-            (ws-send! c "all players have already submitted")))
-        '())
-      (let* ([submission (player-submit g)]
-             [p (car submission)])
-        (if (member p players)
-            (begin
-              (callback submission)
-              (cons submission (all-players-submit g (remove p players) callback)))
-            (begin
-              (ws-send! p "shouldn't have submitted")
-              (all-players-submit g players callback))))))
+  (define submissions (all-players-submit))
 
+  (map (lambda (s) (ws-send! czar (submission-card s))) submissions)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  (define (czar-pick-winner)
+    (let* ([s (player-submit)]
+           [player (submission-player s)])
+      (if (equal? player czar)
+          (submission-card s)
+          (begin
+            (ws-send! player "not the czar")
+            (czar-pick-winner)))))
+
+  (define winner (czar-pick-winner))
+  (displayln (format "Czar chose: ~s" winner))
+
+  (map (lambda (s)
+         (if (equal? (submission-card s) winner)
+             (ws-send! (submission-player s) "You've won!")
+             (ws-send! (submission-player s) "You lost :/")))
+       submissions)
+
+  (displayln "Game Over, quitting"))
+
+;;;;;;;;;; Server
+
+(define SERVER-PATHS (list "/Users/n/src/presentations/outpace_lyat"))
 
 (define-values (dispatcher to-url)
   (dispatch-rules
@@ -139,19 +123,17 @@
       (script ([src ,script]))
       (script ,(format "cah.main.~a()" module))))))
 
-(define (message-loop g c)
+(define (message-loop c)
   (let ([msg (ws-recv c)])
-    (cond
-      [(equal? "join as czar" msg) ((game-czar-join g) c)]
-      [(equal? "join as player" msg) ((game-player-join g) c)]
-      [else ((game-player-submit g) c msg)])
-    (message-loop g c)))
+    (if current-continuation
+      (current-continuation c msg)
+      (ws-send! c "error"))
+    (message-loop c)))
 
-(define the-game (make-game))
-(thread (lambda () (reset (play-game the-game))))
+(thread (lambda () (reset (play-game))))
 
 (define stop-ws-server
-  (ws-serve #:port 9001 (lambda (c state) (message-loop the-game c))))
+  (ws-serve #:port 9001 (lambda (c request) (message-loop c))))
 
 (serve/servlet dispatcher
                #:servlet-path "/"
